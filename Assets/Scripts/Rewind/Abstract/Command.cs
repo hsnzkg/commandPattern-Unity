@@ -5,10 +5,14 @@ using UnityEngine;
 [System.Serializable]
 public abstract class Command
 {
-    [SerializeField]protected int instanceID;
+    [SerializeField]protected GameObject commandObject;
 
-    public Command(int instance = -1){
-        this.instanceID = instance;
+    public Command(GameObject commandObject = null){
+        this.commandObject = commandObject;
+    }
+
+    public GameObject GetCommandObject(){
+        return commandObject;
     }
 
     /// <summary>

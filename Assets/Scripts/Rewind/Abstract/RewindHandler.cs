@@ -11,14 +11,14 @@ using UnityEngine;
 public abstract class RewindHandler : MonoBehaviour
 {
     #region OWN-IMPLEMENTATIONS
-    [SerializeField]public RewindSettings rewindSetting;
-    [SerializeField]private bool rewindComplete = true;
-    [SerializeField]public bool complete { get { return rewindComplete; } set { rewindComplete = value; } }
+    [SerializeField] public RewindSettings rewindSetting;
+    [SerializeField] private bool rewindComplete = true;
+    [SerializeField] public bool complete { get { return rewindComplete; } set { rewindComplete = value; } }
     [SerializeField] protected List<CommandGroup> commands = new List<CommandGroup>();
-    [SerializeField]public bool rewindRequired { get; set; }
-    [SerializeField]protected bool cancelRewind;
-    [SerializeField]protected int currentCommandGroup = -1;
-    [SerializeField]protected bool canRewind = true;
+    [SerializeField] public bool rewindRequired { get; set; }
+    [SerializeField] protected bool cancelRewind;
+    [SerializeField] protected int currentCommandGroup = -1;
+    [SerializeField] protected bool canRewind = true;
     private static readonly string SCRIPT_NAME = typeof(RewindHandler).Name;
     public virtual void Start()
     {
@@ -32,6 +32,7 @@ public abstract class RewindHandler : MonoBehaviour
             Debug.LogError(SCRIPT_NAME + ": ATTEMPT TO ADD NEW COMMAND WHILE REWIND EXECUTE ALL BEGAIVOURS SHOULD BE PAUSE WHILE REWIND");
             return;
         }
+        Debug.Log(command.GetCommandObject().name + ": ATTEMPT TO ADD" + command.GetType().Name);
         commands[currentCommandGroup].Add(command);
         if (executeCommand)
         {

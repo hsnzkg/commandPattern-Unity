@@ -47,7 +47,7 @@ public class ObjectRewindHandler : RewindHandler
     private void Reset()
     {
         ResetFlags();
-
+        Debug.Log("REWIND RESETTING");
         if (currentCommandGroup < 0)
         {
             currentCommandGroup = 0;

@@ -2,10 +2,14 @@ using UnityEngine;
 
 [System.Serializable]
 public abstract class TransformCommand : Command {
-    [SerializeField]protected Transform obj;
+    [SerializeField]protected Transform commandTransform;
 
-    public TransformCommand(Transform obj = null)
+    public TransformCommand(Transform commandTransform = null) : base(commandTransform.gameObject)
     {
-        this.obj = obj;
+        this.commandTransform = commandTransform;
+    }
+
+    public Transform GetCommandTransform(){
+        return commandTransform;
     }
 }

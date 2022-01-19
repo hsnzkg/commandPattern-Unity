@@ -3,7 +3,6 @@ using UnityEngine;
 [System.Serializable]
 public class TransformMovementCommand : TransformCommand
 {
-
     private Vector3? undoDir;
     private Vector3 dir;
     private Vector3 commandPosition;
@@ -17,18 +16,18 @@ public class TransformMovementCommand : TransformCommand
     public override void Execute()
     {
         undoDir = -dir;
-        commandPosition = obj.localPosition;
-        obj.Translate(dir, Space.World);
+        commandPosition = commandTransform.localPosition;
+        commandTransform.Translate(dir, Space.World);
     }
 
     public override void Undo()
     {
         if (undoDir.HasValue)
         {
-            obj.Translate(undoDir.Value, Space.World);
-            if (GetPositionPrecise(obj.localPosition, commandPosition))
+            commandTransform.Translate(undoDir.Value, Space.World);
+            if (GetPositionPrecise(commandTransform.localPosition, commandPosition))
             {
-                obj.localPosition = commandPosition;
+                commandTransform.localPosition = commandPosition;
             }
         }
     }
