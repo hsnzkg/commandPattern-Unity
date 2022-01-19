@@ -4,8 +4,10 @@ using UnityEngine;
 public class TransformMovementCommand : TransformCommand
 {
 
-    [SerializeField] private Vector3? undoDir;
-    [SerializeField] private Vector3 dir;
+    private Vector3? undoDir;
+    private Vector3 dir;
+    private Vector3 commandPosition;
+    private float positionThreshold = Mathf.Epsilon;
 
     public TransformMovementCommand(Transform obj, Vector3 dir = default(Vector3)) : base(obj)
     {
@@ -14,8 +16,8 @@ public class TransformMovementCommand : TransformCommand
 
     public override void Execute()
     {
-        Debug.Log(dir + "EXECUTE COMMAND");
         undoDir = -dir;
+        commandPosition = obj.localPosition;
         obj.Translate(dir, Space.World);
     }
 
@@ -23,10 +25,17 @@ public class TransformMovementCommand : TransformCommand
     {
         if (undoDir.HasValue)
         {
-            Debug.Log(undoDir + "UNDO COMMAND");
-
             obj.Translate(undoDir.Value, Space.World);
+            if (GetPositionPrecise(obj.localPosition, commandPosition))
+            {
+                obj.localPosition = commandPosition;
+            }
         }
+    }
+
+    private bool GetPositionPrecise(Vector3 pos, Vector3 targetPos)
+    {
+        return Vector3.Distance(pos, targetPos) > positionThreshold ? true : false;
     }
 
 }

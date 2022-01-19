@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 public class Object : MonoBehaviour, IKillable
 {
-
     private ObjectRewindHandler objectRewindHandler;
     [SerializeField]private bool Dead = false;
     private bool onDeadRewindInvoked = false;
