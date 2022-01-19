@@ -1,7 +1,8 @@
 using UnityEngine;
 
+[System.Serializable]
 public abstract class TransformCommand : Command {
-    protected Transform obj;
+    [SerializeField]protected Transform obj;
 
     public TransformCommand(Transform obj = null)
     {

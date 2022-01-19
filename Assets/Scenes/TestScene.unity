@@ -408,6 +408,7 @@ GameObject:
   - component: {fileID: 1012481739}
   - component: {fileID: 1012481738}
   - component: {fileID: 1012481742}
+  - component: {fileID: 1012481743}
   m_Layer: 0
   m_Name: DynamicObject
   m_TagString: Untagged
@@ -500,10 +501,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 1012481737}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df18854578c8a5845beacde92290852f, type: 3}
+  m_Script: {fileID: 11500000, guid: 2efe8d65d8ce2a44e8d65db7e1ddcb05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rewindSetting: {fileID: 11400000, guid: 2a59be1aab5de354f9f46e04e8ccfde3, type: 2}
+  rewindComplete: 1
+  commands: []
+  cancelRewind: 0
+  currentCommandGroup: -1
+  canRewind: 1
+--- !u!114 &1012481743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1012481737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e46f1fc5ff234994a8ec6a871687b003, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Dead: 0
 --- !u!1 &1832186323
 GameObject:
   m_ObjectHideFlags: 0
@@ -514,6 +533,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1832186324}
   - component: {fileID: 1832186325}
+  - component: {fileID: 1832186326}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -545,5 +565,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b8a4d2b9f4aa6746aad92e60b46fabd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rewindHandlers: []
+--- !u!114 &1832186326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1832186323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d4eeada29385a6468c1c11d29ae736a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

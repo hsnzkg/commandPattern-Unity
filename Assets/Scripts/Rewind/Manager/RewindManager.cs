@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class RewindManager : MonoBehaviour
 {
 
-    private List<RewindHandler> rewindHandlers = new List<RewindHandler>();
+    [SerializeField]private List<RewindHandler> rewindHandlers = new List<RewindHandler>();
     private static RewindManager _instance;
     public static RewindManager instance
     {

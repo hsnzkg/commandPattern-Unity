@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class CommandGroup
 {
-    private List<Command> commands = new List<Command>();
+
+    [SerializeField]private List<Command> commands = new List<Command>();
 
     public void Add(Command command){
         commands.Add(command);

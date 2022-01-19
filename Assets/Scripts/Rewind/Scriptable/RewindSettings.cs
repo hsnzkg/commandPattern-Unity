@@ -5,5 +5,5 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "RewindSetting", menuName = "ScriptableObjects/Rewind/RewindSettings", order = 1)]
 public class RewindSettings : ScriptableObject
 {
-    public int maxTimeStep = -1;
+    public int maxTimeStep = 400;
 }
