@@ -7,8 +7,6 @@ public class Object : MonoBehaviour, IKillable
     private ObjectRewindHandler objectRewindHandler;
     private bool Dead = false;
     private bool onDeadRewindInvoked = false;
-
-
     public bool dead
     {
         get
@@ -24,22 +22,22 @@ public class Object : MonoBehaviour, IKillable
             }
         }
     }
-
-
     private void Move()
     {
         Vector3 amountToMove = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        objectRewindHandler.AddCommand(new TransformMovementCommand(transform, amountToMove * Time.deltaTime), true);
+        objectRewindHandler.AddCommand(new Translate(transform, amountToMove * Time.deltaTime), true);
     }
-
-
+    private void Rotate()
+    {
+        Vector3 amountToRotate = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+        objectRewindHandler.AddCommand(new Rotate(transform, amountToRotate * 100f * Time.deltaTime), true);
+        objectRewindHandler.AddCommand(new TransformCommand(transform),true);
+    }
     private void Start()
     {
         objectRewindHandler = GetComponent<ObjectRewindHandler>();
         rewindManager = GameObject.FindObjectOfType<RewindManager>();
     }
-
-
     private void Update()
     {
         if (!objectRewindHandler.complete)
@@ -58,7 +56,13 @@ public class Object : MonoBehaviour, IKillable
             objectRewindHandler.AddCommand(new ObjectDeadCommand(transform, this), true);
             return;
         }
-        Move();
+        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+        {
+            Move();
+            Rotate();
+        }
+
+
     }
 
 }

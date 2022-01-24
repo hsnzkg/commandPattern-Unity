@@ -32,7 +32,7 @@ public abstract class RewindHandler : MonoBehaviour
             Debug.LogError(SCRIPT_NAME + ": ATTEMPT TO ADD NEW COMMAND WHILE REWIND EXECUTE ALL BEGAIVOURS SHOULD BE PAUSE WHILE REWIND");
             return;
         }
-        Debug.Log(command.GetCommandObject().name + ": ATTEMPT TO ADD" + command.GetType().Name);
+        Debug.Log(command.GetCommandObject().name + ": ATTEMPT TO ADD " + command.GetType().Name);
         commands[currentCommandGroup].Add(command);
         if (executeCommand)
         {
