@@ -24,13 +24,15 @@ public class Object : MonoBehaviour, IKillable
     }
     private void Move()
     {
-        Vector3 amountToMove = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        objectRewindHandler.AddCommand(new TransformCommand(transform,(amountToMove * Time.deltaTime)),true);
+        Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+        Vector3 finalDir = moveDir * Time.deltaTime;
+        objectRewindHandler.AddCommand(new Translate(transform,finalDir),true);
     }
     private void Rotate()
     {
-        Vector3 amountToRotate = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        objectRewindHandler.AddCommand(new TransformCommand(transform,(Quaternion.Euler(amountToRotate * 100f * Time.deltaTime))),true);
+        Vector3 rotateDir = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+        Quaternion finalDir = Quaternion.Euler( rotateDir * 100f * Time.deltaTime);
+        objectRewindHandler.AddCommand(new Rotate(transform,finalDir),true);
     }
     private void Start()
     {

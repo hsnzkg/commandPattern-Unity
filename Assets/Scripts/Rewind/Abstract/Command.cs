@@ -24,9 +24,6 @@ public abstract class Command
         return commandObject;
     }
 
-
-
-
     // use execute for run and undo for re undo
     public abstract void Execute();
     public abstract void Undo();
