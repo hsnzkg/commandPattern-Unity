@@ -45,7 +45,7 @@ public class RewindManager : MonoBehaviour
     public void Execute()
     {
         RewindStarted();
-        foreach (var rewind in rewindHandlers)
+        foreach (RewindHandler rewind in rewindHandlers)
         {
             rewind.RequestRewind();
         }
@@ -59,7 +59,7 @@ public class RewindManager : MonoBehaviour
     public void Cancel()
     {
         RewindStopped();
-        foreach (var rewind in rewindHandlers)
+        foreach (RewindHandler rewind in rewindHandlers)
         {
             rewind.CancelRewind();
         }

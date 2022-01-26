@@ -2,12 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 /*
 Each rewindable action must be extend this class.
 Each extended class must have only cloned component functions
 */
-
 
 [System.Serializable]
 public abstract class Command

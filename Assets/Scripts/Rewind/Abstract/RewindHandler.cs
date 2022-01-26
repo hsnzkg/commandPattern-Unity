@@ -1,54 +1,75 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 /// <summary>
 /// Abstract class provides bass functionality for a concrete rewind class. Stores a list
-/// of commands (i.e. movement/attack). When player presses rewind button, the execute method
+/// of commandGroups (i.e. movement/attack). When player presses rewind button, the execute method
 /// is invoked each time step.
 /// </summary>
 
 public abstract class RewindHandler : MonoBehaviour
 {
     #region OWN-IMPLEMENTATIONS
+
+    [Header("GROUP SETTINGS")]
+    [SerializeField] protected List<CommandGroup> commandGroups = new List<CommandGroup>();
     [SerializeField] public RewindSettings rewindSetting;
+    [SerializeField] protected int currentCommandGroup = -1;
+
+    [Header("REWIND SETTINGS")]
     [SerializeField] private bool rewindComplete = true;
     [SerializeField] public bool complete { get { return rewindComplete; } set { rewindComplete = value; } }
-    [SerializeField] protected List<CommandGroup> commands = new List<CommandGroup>();
     [SerializeField] public bool rewindRequired { get; set; }
     [SerializeField] protected bool cancelRewind;
-    [SerializeField] protected int currentCommandGroup = -1;
     [SerializeField] protected bool canRewind = true;
+
+    [Header("UPDATE SETTINGS")]
+    [SerializeField] protected UPDATE_TYPE updateType = UPDATE_TYPE.UPDATE;
     private static readonly string SCRIPT_NAME = typeof(RewindHandler).Name;
-    public virtual void Start()
+
+    public enum UPDATE_TYPE
+    {
+        UPDATE,
+        FIXEDUPDATE,
+    }
+
+    public virtual void Awake()
     {
         IncreaseGroup();
+    }
+
+    public virtual void Start()
+    {
+
     }
 
     public void AddCommand(Command command, bool executeCommand)
     {
         if (!complete)
         {
-            Debug.LogError(SCRIPT_NAME + ": ATTEMPT TO ADD NEW COMMAND WHILE REWIND EXECUTE ALL BEGAIVOURS SHOULD BE PAUSE WHILE REWIND");
+            Debug.LogError(command.GetType() + ": ATTEMPT TO ADD NEW COMMAND WHILE REWIND EXECUTE ALL BEHAIVOURS SHOULD BE PAUSE WHILE REWIND");
             return;
         }
+
+        if (commandGroups[currentCommandGroup].IsFull())
+        {
+            Debug.LogWarning("COMMAND GROUP IS FULL CREATING NEW GROUP");
+            IncreaseGroup();
+        }
+
         Debug.Log(command.GetCommandObject().name + ": ATTEMPT TO ADD " + command.GetType().Name);
-        commands[currentCommandGroup].Add(command);
+        commandGroups[currentCommandGroup].Add(command);
         if (executeCommand)
         {
             command.Execute();
         }
     }
 
-    private void IncreaseGroup()
+    protected void IncreaseGroup()
     {
         currentCommandGroup++;
-        commands.Add(new CommandGroup());
-        if (commands.Count > rewindSetting.maxTimeStep)
-        {
-            commands.RemoveAt(0);
-            currentCommandGroup = rewindSetting.maxTimeStep - 1;
-        }
+        commandGroups.Add(new CommandGroup(rewindSetting.maxTimeStep));
     }
 
     protected bool RewindRequested()
@@ -90,33 +111,38 @@ public abstract class RewindHandler : MonoBehaviour
         canRewind = false;
     }
 
-    protected abstract void Execute();
+    public void RewindLoop()
+    {
+        if (RewindRequested())
+        {
+            rewindRequired = true;
+        }
+        if (rewindRequired)
+        {
+            complete = false;
+        }
+    }
 
+    protected abstract void Execute();
     #endregion
 
 
 
 
     #region UNITY-IMPLEMENTATIONS
-    private void LateUpdate()
+    public virtual void Update()
     {
-        if (!rewindRequired && complete)
-        {
-            IncreaseGroup();
-        }
+        RewindLoop();
     }
 
-    private void Update()
+    public virtual void FixedUpdate()
     {
-        if (rewindRequired)
-        {
-            complete = false;
-            Execute();
-        }
-        if (RewindRequested())
-        {
-            rewindRequired = true;
-        }
+
+    }
+
+    public virtual void LateUpdate()
+    {
+
     }
     #endregion
 }

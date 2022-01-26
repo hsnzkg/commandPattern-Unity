@@ -2,6 +2,13 @@ using UnityEngine;
 
 public class ObjectRewindHandler : RewindHandler
 {
+    private Rigidbody objectRigidbody;
+
+    public override void Awake()
+    {
+        base.Awake();
+        objectRigidbody = GetComponent<Rigidbody>();
+    }
 
     public override void Start()
     {
@@ -17,27 +24,26 @@ public class ObjectRewindHandler : RewindHandler
             Debug.LogError("CANT FIND REWIND MANAGER !");
             return;
         }
-
         rewindManager.RegisterRewindHandler(this);
     }
 
     protected override void Execute()
     {
-        if (CancelRequested())
+        objectRigidbody.isKinematic = true;
+        
+        if (!commandGroups[currentCommandGroup].IsEmpty())
         {
-            Reset();
-            return;
+            Command lastCommand = commandGroups[currentCommandGroup].GetLastCommand();
+            lastCommand.Undo();
+            commandGroups[currentCommandGroup].Remove(lastCommand);
+        }
+        else
+        {
+            commandGroups.RemoveAt(currentCommandGroup);    
+            currentCommandGroup--;
         }
 
-        foreach (Command command in commands[currentCommandGroup].Reverse())
-        {
-            command.Undo();
-        }
-
-        commands.RemoveAt(currentCommandGroup);
-        currentCommandGroup--;
-
-        if (currentCommandGroup < 0)
+        if(currentCommandGroup < 0)
         {
             Reset();
             return;
@@ -46,21 +52,43 @@ public class ObjectRewindHandler : RewindHandler
 
     private void Reset()
     {
-        ResetFlags();
-        Debug.Log("REWIND RESETTING");
         if (currentCommandGroup < 0)
         {
-            currentCommandGroup = 0;
-            commands.Add(new CommandGroup());
+            IncreaseGroup();
         }
+        ResetFlags();
     }
 
     private void ResetFlags()
     {
+        Debug.Log("REWIND RESETTING");
+        objectRigidbody.isKinematic = false;
         complete = true;
         cancelRewind = false;
         rewindRequired = false;
         canRewind = true;
+    }
+
+    public override void Update()
+    {
+        base.Update();
+        if (CancelRequested())
+        {
+            Reset();
+        }
+    }
+
+    public override void FixedUpdate()
+    {
+        if (rewindRequired)
+        {
+            Execute();
+        }
+    }
+
+    public override void LateUpdate()
+    {
+        base.LateUpdate();
     }
 
 }

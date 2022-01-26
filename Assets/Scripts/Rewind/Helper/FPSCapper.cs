@@ -1,7 +1,8 @@
 using UnityEngine;
 
 public class FPSCapper : MonoBehaviour {
+    public int FPS_CAP;
     private void Awake() {
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = FPS_CAP;
     }
 }
