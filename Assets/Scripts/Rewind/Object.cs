@@ -44,7 +44,7 @@ public class Object : MonoBehaviour, IKillable
     private void RigidbodyMove()
     {
         Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        Vector3 finalDir = moveDir * 1000f * Time.deltaTime;
+        Vector3 finalDir = moveDir * 1000f * Time.fixedDeltaTime;
         objectRewindHandler.AddCommand(new AddForce(gameObject.GetComponent<Rigidbody>(), finalDir), true);
     }
 
@@ -60,11 +60,13 @@ public class Object : MonoBehaviour, IKillable
         RigidbodyMove();
         RigidbodyRotate();
     }
+
     private void Start()
     {
         objectRewindHandler = GetComponent<ObjectRewindHandler>();
         rewindManager = GameObject.FindObjectOfType<RewindManager>();
     }
+
     private void Update()
     {
         if (!objectRewindHandler.complete)
@@ -97,6 +99,15 @@ public class Object : MonoBehaviour, IKillable
         if (updateType == UPDATE_TYPE.FIXEDUPDATE)
         {
             MovementLoop();
+        }
+
+        if(Input.GetKey(KeyCode.U))
+        {
+            Time.timeScale = Mathf.Clamp(Time.timeScale - 0.01f,0f,2f);
+        }
+        if (Input.GetKey(KeyCode.I))
+        {
+            Time.timeScale = Mathf.Clamp(Time.timeScale + 0.01f, 0f, 2f);
         }
     }
 }

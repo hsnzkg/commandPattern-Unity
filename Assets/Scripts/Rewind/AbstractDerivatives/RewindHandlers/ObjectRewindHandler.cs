@@ -29,7 +29,7 @@ public class ObjectRewindHandler : RewindHandler
 
     protected override void Execute()
     {
-        objectRigidbody.isKinematic = true;
+        objectRigidbody.Sleep();
         
         if (!commandGroups[currentCommandGroup].IsEmpty())
         {
@@ -62,7 +62,7 @@ public class ObjectRewindHandler : RewindHandler
     private void ResetFlags()
     {
         Debug.Log("REWIND RESETTING");
-        objectRigidbody.isKinematic = false;
+        objectRigidbody.WakeUp();
         complete = true;
         cancelRewind = false;
         rewindRequired = false;
@@ -88,7 +88,7 @@ public class ObjectRewindHandler : RewindHandler
 
     public override void LateUpdate()
     {
-        base.LateUpdate();
+        
     }
 
 }

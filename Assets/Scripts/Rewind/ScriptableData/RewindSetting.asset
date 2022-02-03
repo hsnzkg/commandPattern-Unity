@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af8e277e656b8f6469c52a1ce2a22dfd, type: 3}
   m_Name: RewindSetting
   m_EditorClassIdentifier: 
-  maxTimeStep: 512
+  maxTimeStep: 128

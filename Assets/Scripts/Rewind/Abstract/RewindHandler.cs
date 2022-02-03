@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+
+using System.IO;
+using System.IO.Compression;
+using System.Runtime.Serialization.Formatters.Binary;
+
 /// <summary>
 /// Abstract class provides bass functionality for a concrete rewind class. Stores a list
 /// of commandGroups (i.e. movement/attack). When player presses rewind button, the execute method
@@ -14,10 +19,11 @@ public abstract class RewindHandler : MonoBehaviour
 
     [Header("GROUP SETTINGS")]
     [SerializeField] protected List<CommandGroup> commandGroups = new List<CommandGroup>();
-    [SerializeField] public RewindSettings rewindSetting;
-    [SerializeField] protected int currentCommandGroup = -1;
-
     [Header("REWIND SETTINGS")]
+    [SerializeField] private RewindSettings rewindSetting;
+    protected int currentCommandGroup = -1;
+
+    [Header("REWIND CONTROLLERS")]
     [SerializeField] private bool rewindComplete = true;
     [SerializeField] public bool complete { get { return rewindComplete; } set { rewindComplete = value; } }
     [SerializeField] public bool rewindRequired { get; set; }
@@ -125,9 +131,6 @@ public abstract class RewindHandler : MonoBehaviour
 
     protected abstract void Execute();
     #endregion
-
-
-
 
     #region UNITY-IMPLEMENTATIONS
     public virtual void Update()

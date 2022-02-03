@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[System.Serializable]
 public abstract class RigidbodyCommands : Command
 {
     protected Rigidbody commandRigidbody;
@@ -25,6 +26,7 @@ public abstract class RigidbodyCommands : Command
     }
 }
 
+[System.Serializable]
 public class AddForce : RigidbodyCommands
 {
     private Vector3 forceDir;
@@ -54,22 +56,8 @@ public class AddForce : RigidbodyCommands
     {
         if (forceUndoDir.HasValue)
         {
-            //UndoDynamic();
-            UndoStatic();
+            commandRigidbody.AddForce(forceUndoDir.Value);
         }
-        else
-        {
-            UndoStatic();
-        }
-    }
-
-    private void UndoDynamic()
-    {
-        commandRigidbody.AddForce(forceUndoDir.Value);
-    }
-
-    private void UndoStatic()
-    {
         if (GetUndoPrecise(commandRigidbody.position, commandPosition, commandRigidbody.rotation.eulerAngles, commandRotation.eulerAngles, commandRigidbody.velocity, commandVelocity, commandRigidbody.angularVelocity, commandAngularVelocity))
         {
             commandRigidbody.velocity = commandVelocity;

@@ -507,11 +507,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   commandGroups: []
   rewindSetting: {fileID: 11400000, guid: 2a59be1aab5de354f9f46e04e8ccfde3, type: 2}
-  currentCommandGroup: -1
   rewindComplete: 1
   cancelRewind: 0
   canRewind: 1
-  updateType: 1
+  updateType: 0
 --- !u!114 &1012481743
 MonoBehaviour:
   m_ObjectHideFlags: 0
