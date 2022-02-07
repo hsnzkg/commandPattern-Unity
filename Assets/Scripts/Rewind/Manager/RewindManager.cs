@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class RewindManager : MonoBehaviour
 {
-
-    [SerializeField]private List<RewindHandler> rewindHandlers = new List<RewindHandler>();
+    [SerializeField] private bool DEBUG = false;
+    [SerializeField] private List<RewindHandler> rewindHandlers = new List<RewindHandler>();
     private static RewindManager _instance;
     public static RewindManager instance
     {
@@ -20,12 +20,18 @@ public class RewindManager : MonoBehaviour
     }
     public void RewindStarted()
     {
-       Debug.Log("REWIND - STARTED ! ");
+        if (DEBUG)
+        {
+            Debug.Log("REWIND - STARTED ! ");
+        }
     }
 
     public void RewindStopped()
     {
-       Debug.Log("REWIND - STOPPED ! ");
+        if (DEBUG)
+        {
+            Debug.Log("REWIND - STOPPED ! ");
+        }
     }
 
 
@@ -65,9 +71,14 @@ public class RewindManager : MonoBehaviour
         }
     }
 
-    public void RegisterRewindHandler(ObjectRewindHandler rewind)
+    public void RegisterRewindHandler(RewindHandler rewind)
     {
         rewindHandlers.Add(rewind);
+    }
+
+    public void UnRegisterRewindHandler(RewindHandler rewind)
+    {
+        rewindHandlers.Remove(rewind);
     }
 
 }

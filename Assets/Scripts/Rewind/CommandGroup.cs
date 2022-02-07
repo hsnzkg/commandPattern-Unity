@@ -5,37 +5,29 @@ using UnityEngine;
 [System.Serializable]
 public class CommandGroup
 {
-    public CommandGroup (int MAX_COMMAND_SIZE)
+    public CommandGroup(int MAX_COMMAND_SIZE)
     {
         this.MAX_COMMAND_SIZE = MAX_COMMAND_SIZE;
     }
 
-    [SerializeField]private List<Command> commands = new List<Command>();
+    [SerializeField] private readonly Stack<Command> commands = new Stack<Command>();
     private int MAX_COMMAND_SIZE = -1;
 
     public void Add(Command command)
     {
-        commands.Add(command);
-    }
-    
-    public void RemoveAt(int index)
-    {
-        commands.RemoveAt(index);
+        commands.Push(command);
     }
 
-    public void Remove(Command command)
+    public Command GetLastCommand()
     {
-        commands.Remove(command);
-    }
-
-    public Command Get(int index){
-        return commands[index];
+        return commands.Pop();
     }
 
     public bool IsFull()
     {
         return commands.Count == MAX_COMMAND_SIZE ? true : false;
     }
+    
     public bool IsEmpty()
     {
         return commands.Count <= 0 ? true : false;
@@ -44,16 +36,5 @@ public class CommandGroup
     public int Lenght()
     {
         return commands.Count;
-    }
-
-    public Command GetLastCommand()
-    {
-        return commands[commands.Count-1];
-    }
-
-    public List<Command> Reverse()
-    {
-        commands.Reverse();
-        return commands;
     }
 }

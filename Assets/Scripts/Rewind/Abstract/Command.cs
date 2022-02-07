@@ -26,3 +26,24 @@ public abstract class Command
     public abstract void Execute();
     public abstract void Undo();
 }
+
+
+public class Idle : Command
+{
+    public Idle(GameObject obj) :base(obj)
+    {
+        //do nothing
+        return;
+    }
+    public override void Execute()
+    {
+        //do nothing
+        return;
+    }
+    public override void Undo()
+    {
+        //do nothing
+        return;    
+    }
+
+}

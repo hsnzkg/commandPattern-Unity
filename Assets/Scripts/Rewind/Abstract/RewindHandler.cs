@@ -1,11 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-
-using System.IO;
-using System.IO.Compression;
-using System.Runtime.Serialization.Formatters.Binary;
 
 /// <summary>
 /// Abstract class provides bass functionality for a concrete rewind class. Stores a list
@@ -15,13 +9,12 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public abstract class RewindHandler : MonoBehaviour
 {
-    #region OWN-IMPLEMENTATIONS
+    [SerializeField] private bool DEBUG = false;
 
     [Header("GROUP SETTINGS")]
-    [SerializeField] protected List<CommandGroup> commandGroups = new List<CommandGroup>();
+    [SerializeField] protected Stack<CommandGroup> commandGroups = new Stack<CommandGroup>();
     [Header("REWIND SETTINGS")]
     [SerializeField] private RewindSettings rewindSetting;
-    protected int currentCommandGroup = -1;
 
     [Header("REWIND CONTROLLERS")]
     [SerializeField] private bool rewindComplete = true;
@@ -31,41 +24,38 @@ public abstract class RewindHandler : MonoBehaviour
     [SerializeField] protected bool canRewind = true;
 
     [Header("UPDATE SETTINGS")]
-    [SerializeField] protected UPDATE_TYPE updateType = UPDATE_TYPE.UPDATE;
+    [SerializeField] protected RewindEnums.UPDATE_TYPE updateType = RewindEnums.UPDATE_TYPE.UPDATE;
     private static readonly string SCRIPT_NAME = typeof(RewindHandler).Name;
 
-    public enum UPDATE_TYPE
-    {
-        UPDATE,
-        FIXEDUPDATE,
-    }
-
-    public virtual void Awake()
-    {
-        IncreaseGroup();
-    }
-
-    public virtual void Start()
-    {
-
-    }
-
+    #region OWN-IMPLEMENTATIONS
     public void AddCommand(Command command, bool executeCommand)
     {
         if (!complete)
         {
-            Debug.LogError(command.GetType() + ": ATTEMPT TO ADD NEW COMMAND WHILE REWIND EXECUTE ALL BEHAIVOURS SHOULD BE PAUSE WHILE REWIND");
+            if (DEBUG)
+            {
+                Debug.LogError(command.GetType() + ": ATTEMPT TO ADD NEW COMMAND WHILE REWIND EXECUTE ALL BEHAIVOURS SHOULD BE PAUSE WHILE REWIND");
+
+            }
             return;
         }
 
-        if (commandGroups[currentCommandGroup].IsFull())
+        if (commandGroups.Peek().IsFull())
         {
-            Debug.LogWarning("COMMAND GROUP IS FULL CREATING NEW GROUP");
-            IncreaseGroup();
+            if (DEBUG)
+            {
+                Debug.LogWarning("COMMAND GROUP IS FULL CREATING NEW GROUP");
+
+            }
+            IncreaseGroup();        
         }
 
-        Debug.Log(command.GetCommandObject().name + ": ATTEMPT TO ADD " + command.GetType().Name);
-        commandGroups[currentCommandGroup].Add(command);
+        if (DEBUG)
+        {
+            Debug.Log(command.GetCommandObject().name + ": ATTEMPT TO ADD " + command.GetType().Name);
+
+        }
+        commandGroups.Peek().Add(command);
         if (executeCommand)
         {
             command.Execute();
@@ -74,8 +64,7 @@ public abstract class RewindHandler : MonoBehaviour
 
     protected void IncreaseGroup()
     {
-        currentCommandGroup++;
-        commandGroups.Add(new CommandGroup(rewindSetting.maxTimeStep));
+        commandGroups.Push(new CommandGroup(rewindSetting.maxCommandCount));
     }
 
     protected bool RewindRequested()
@@ -97,7 +86,6 @@ public abstract class RewindHandler : MonoBehaviour
         }
         return cancel;
     }
-
 
     public void CancelRewind()
     {
@@ -129,23 +117,120 @@ public abstract class RewindHandler : MonoBehaviour
         }
     }
 
-    protected abstract void Execute();
+
+
+
+    protected virtual void Reset()
+    {
+        if (commandGroups.Count <= 0)
+        {
+            IncreaseGroup();
+        }
+        ResetFlags();
+    }
+
+    protected virtual void ResetFlags()
+    {
+        if (DEBUG)
+        {
+            Debug.Log("REWIND RESETTING");
+        }
+
+        complete = true;
+        cancelRewind = false;
+        rewindRequired = false;
+        canRewind = true;
+    }
+
+    protected virtual void RegisterHandler()
+    {
+        RewindManager rewindManager = RewindManager.instance;
+        if (!rewindManager)
+        {
+            if (DEBUG)
+            {
+                Debug.LogWarning("CANT FIND REWIND MANAGER !");
+
+            }
+            return;
+        }
+        rewindManager.RegisterRewindHandler(this);
+    }
+
+    protected virtual void UnRegisterHandler()
+    {
+        RewindManager rewindManager = RewindManager.instance;
+        if (!rewindManager)
+        {
+            if (DEBUG)
+            {
+                Debug.LogWarning("CANT FIND REWIND MANAGER !");
+
+            }
+            return;
+        }
+        rewindManager.UnRegisterRewindHandler(this);
+    }
+    
+
+    protected virtual void Execute()
+    {
+        if (!commandGroups.Peek().IsEmpty())
+        {
+            Command lastCommand = commandGroups.Peek().GetLastCommand();
+            lastCommand.Undo();
+        }
+        else
+        {
+            commandGroups.Pop();
+        }
+
+        if (commandGroups.Count <= 0)
+        {
+            Reset();
+            return;
+        }
+    }
     #endregion
 
     #region UNITY-IMPLEMENTATIONS
+
+
+    public virtual void Awake()
+    {
+        IncreaseGroup();
+    }
+
+    public virtual void Start()
+    {
+        RegisterHandler();
+    }
+
+    private void OnDestroy()
+    {
+        UnRegisterHandler();
+    }
+
     public virtual void Update()
     {
         RewindLoop();
+        if (CancelRequested())
+        {
+            Reset();
+        }
+
+        if (rewindRequired && updateType == RewindEnums.UPDATE_TYPE.UPDATE)
+        {
+            Execute();
+        }
     }
 
     public virtual void FixedUpdate()
     {
-
-    }
-
-    public virtual void LateUpdate()
-    {
-
+        if (rewindRequired && updateType == RewindEnums.UPDATE_TYPE.FIXEDUPDATE)
+        {
+            Execute();
+        }
     }
     #endregion
 }

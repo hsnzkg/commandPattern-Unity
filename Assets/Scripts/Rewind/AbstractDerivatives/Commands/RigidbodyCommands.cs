@@ -53,17 +53,21 @@ public class AddForce : RigidbodyCommands
     }
 
     public override void Undo()
-    {
+    {   /*
         if (forceUndoDir.HasValue)
         {
             commandRigidbody.AddForce(forceUndoDir.Value);
         }
+        */
+        commandRigidbody.velocity = commandVelocity;
+        commandRigidbody.angularVelocity = commandAngularVelocity;
+        commandRigidbody.position = commandPosition;
+        commandRigidbody.rotation = commandRotation;
+        /*
         if (GetUndoPrecise(commandRigidbody.position, commandPosition, commandRigidbody.rotation.eulerAngles, commandRotation.eulerAngles, commandRigidbody.velocity, commandVelocity, commandRigidbody.angularVelocity, commandAngularVelocity))
         {
-            commandRigidbody.velocity = commandVelocity;
-            commandRigidbody.angularVelocity = commandAngularVelocity;
-            commandRigidbody.position = commandPosition;
-            commandRigidbody.rotation = commandRotation;
+      
         }
+        */
     }
 }
