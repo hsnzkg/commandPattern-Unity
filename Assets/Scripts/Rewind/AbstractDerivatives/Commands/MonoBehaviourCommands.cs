@@ -3,7 +3,7 @@ using UnityEngine;
 
 public abstract class MonoBehaviourCommands : Command 
 {
-    public MonoBehaviourCommands(GameObject obj) :base(obj)
+    public MonoBehaviourCommands(string obj) :base(obj)
     {
     }
 }
@@ -17,7 +17,7 @@ public class Instantiate : MonoBehaviourCommands
     private Quaternion rot;
     private Transform parent;
 
-    public Instantiate(GameObject obj,GameObject objPrefab,Vector3 pos,Quaternion rot,Transform parent = null) : base(obj)
+    public Instantiate(string obj,GameObject objPrefab,Vector3 pos,Quaternion rot,Transform parent = null) : base(obj)
     {
         this.objPrefab = objPrefab;
         this.pos = pos;
@@ -41,7 +41,7 @@ public class SetActive : MonoBehaviourCommands
     private GameObject target;
     private bool value;
     private bool? undoValue;
-    public SetActive(GameObject obj,GameObject target,bool value) : base(obj)
+    public SetActive(string obj,GameObject target,bool value) : base(obj)
     {
         this.target = target;
         this.value = value;

@@ -31,12 +31,12 @@ public class ObjectCreator : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.Space) && (objCount < objLimit ||objLimit == -1))
             {
-                rewindHandler.AddCommand(new Instantiate(this.gameObject, prefabs[0], Vector3.zero, Quaternion.identity, null), true);
+                rewindHandler.AddCommand(new Instantiate(gameObject.name, prefabs[0], Vector3.zero, Quaternion.identity, null), true);
                 objCount++;
             }
             else
             {
-                rewindHandler.AddCommand(new Idle(this.gameObject), false);
+                rewindHandler.AddCommand(new Idle(gameObject.name), false);
             }
         }
 
@@ -51,12 +51,12 @@ public class ObjectCreator : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.Space) && (objCount < objLimit ||objLimit == -1))
             {
-                rewindHandler.AddCommand(new Instantiate(this.gameObject, prefabs[0], Vector3.zero, Quaternion.identity, null), true);
+                rewindHandler.AddCommand(new Instantiate(gameObject.name, prefabs[0], Vector3.zero, Quaternion.identity, null), true);
                 objCount++;
             }
             else
             {
-                rewindHandler.AddCommand(new Idle(this.gameObject), false);
+                rewindHandler.AddCommand(new Idle(gameObject.name), false);
             }
         }
 

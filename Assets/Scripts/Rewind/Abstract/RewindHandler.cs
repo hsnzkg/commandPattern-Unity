@@ -66,11 +66,8 @@ public abstract class RewindHandler : MonoBehaviour
 
     protected void IncreaseGroup()
     {
-        CommandGroup tempGroup = commandGroup;
-        commandGroup.ClearCommands();
-        Debug.Log(tempGroup.Lenght());
-        byte[] tempData = DataCompresser.Compress(tempGroup);
-        commandDatas.Push(tempData);
+        commandDatas.Push(DataCompresser.Compress(commandGroup));
+        commandGroup.ClearCommands(); 
     }
 
     protected bool RewindRequested()
@@ -201,6 +198,7 @@ public abstract class RewindHandler : MonoBehaviour
 
     public virtual void Awake()
     {
+        this.gameObject.name = this.gameObject.name +"-"+ this.gameObject.GetInstanceID().ToString();
         commandGroup = new CommandGroup(rewindSetting.maxFrameCount);
     }
 

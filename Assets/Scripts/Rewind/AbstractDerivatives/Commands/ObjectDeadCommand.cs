@@ -4,7 +4,7 @@ public class ObjectDeadCommand : TransformCommand
 {
     private IKillable killable;
 
-    public ObjectDeadCommand(Transform obj, IKillable killable):base(obj)
+    public ObjectDeadCommand(string obj, IKillable killable):base(obj)
     {
         this.killable = killable;
     }

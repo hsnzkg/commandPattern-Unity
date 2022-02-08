@@ -6,9 +6,9 @@ public abstract class TransformCommand : Command
     protected Transform commandTransform;
     private float TRANSFORM_THRESHOLD = Mathf.Epsilon;
 
-    public TransformCommand(Transform commandTransform) : base(commandTransform.gameObject)
+    public TransformCommand(string obj) : base(obj)
     {
-        this.commandTransform = commandTransform;
+        this.commandTransform = base.GetCommandObject().transform;
     }
 
     public Transform GetCommandTransform()
@@ -27,7 +27,7 @@ public class Translate : TransformCommand
     private Vector3 translateDir;
     private Vector3? translateUndoDir;
     private Vector3 commandPosition;
-    public Translate(Transform obj, Vector3 translateDir) : base(obj)
+    public Translate(string obj, Vector3 translateDir) : base(obj)
     {
         this.commandPosition = commandTransform.localPosition;
         this.translateDir = translateDir;
@@ -57,7 +57,7 @@ public class Rotate : TransformCommand
     private Quaternion rotateDir;
     private Quaternion rotateUndoDir;
     private Quaternion commandRotation;
-    public Rotate(Transform obj, Quaternion rotateDir) : base(obj)
+    public Rotate(string obj, Quaternion rotateDir) : base(obj)
     {
         this.commandRotation = commandTransform.localRotation;
         this.rotateDir = rotateDir;

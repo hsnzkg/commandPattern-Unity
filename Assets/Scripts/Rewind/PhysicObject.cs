@@ -35,20 +35,20 @@ public class PhysicObject : MonoBehaviour, IKillable
     {
         Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
         Vector3 finalDir = moveDir * 1000f * Time.deltaTime;
-        objectRewindHandler.AddCommand(new Translate(transform, finalDir), true);
+        objectRewindHandler.AddCommand(new Translate(gameObject.name, finalDir), true);
     }
     private void TransformRotate()
     {
         Vector3 rotateDir = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
         Quaternion finalDir = Quaternion.Euler(rotateDir * 100f * Time.deltaTime);
-        objectRewindHandler.AddCommand(new Rotate(transform, finalDir), true);
+        objectRewindHandler.AddCommand(new Rotate(gameObject.name, finalDir), true);
     }
 
     private void RigidbodyMove()
     {
         Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
         Vector3 finalDir = moveDir * physicSettings.movementSpeed * Time.deltaTime;
-        objectRewindHandler.AddCommand(new AddForce(rb, finalDir), true);
+        objectRewindHandler.AddCommand(new AddForce(gameObject.name, finalDir), true);
     }
     private bool IsTryingToMove(){
         if(Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
@@ -65,7 +65,7 @@ public class PhysicObject : MonoBehaviour, IKillable
 
     private void RigidbodyIdle()
     {
-        objectRewindHandler.AddCommand(new Idle(this.gameObject), false);
+        objectRewindHandler.AddCommand(new Idle(gameObject.name), false);
     }
 
     private void MovementLoop()

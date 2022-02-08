@@ -10,16 +10,16 @@ Each extended class must have only cloned component functions
 [System.Serializable]
 public abstract class Command
 {
-    [SerializeField] protected GameObject commandObject;
+    [SerializeField] protected string commandObject;
 
-    public Command(GameObject commandObject = null)
+    public Command(string commandObject = null)
     {
         this.commandObject = commandObject;
     }
 
     public GameObject GetCommandObject()
     {
-        return commandObject;
+        return GameObject.Find(commandObject);
     }
 
     // use execute for run and undo for re undo
@@ -27,10 +27,10 @@ public abstract class Command
     public abstract void Undo();
 }
 
-
+[System.Serializable]
 public class Idle : Command
 {
-    public Idle(GameObject obj) :base(obj)
+    public Idle(string obj) :base(obj)
     {
         //do nothing
         return;

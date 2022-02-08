@@ -3,17 +3,15 @@ using UnityEngine;
 [System.Serializable]
 public abstract class RigidbodyCommands : Command
 {
-    protected Rigidbody commandRigidbody;
     private float RIGIDBODY_THRESHOLD = Mathf.Epsilon;
-
-    public RigidbodyCommands(Rigidbody commandRigidbody) : base(commandRigidbody.gameObject)
+    public RigidbodyCommands(string obj) : base(obj)
     {
-        this.commandRigidbody = commandRigidbody;
+
     }
 
     public Rigidbody GetCommandRigidbody()
     {
-        return this.commandRigidbody;
+        return base.GetCommandObject().GetComponent<Rigidbody>();
     }
 
     public bool GetUndoPrecise(Vector3 pos, Vector3 targetPos, Vector3 rot, Vector3 targetRot, Vector3 vel, Vector3 targetVel, Vector3 angularVel, Vector3 targetAngularVel)
@@ -29,27 +27,27 @@ public abstract class RigidbodyCommands : Command
 [System.Serializable]
 public class AddForce : RigidbodyCommands
 {
-    private Vector3 forceDir;
-    private Vector3? forceUndoDir;
-    private Vector3 commandPosition;
-    private Quaternion commandRotation;
-    private Vector3 commandVelocity;
-    private Vector3 commandAngularVelocity;
+    private SVector3 forceDir;
+    private SVector3? forceUndoDir;
+    private SVector3 commandPosition;
+    private SQuaternion commandRotation;
+    private SVector3 commandVelocity;
+    private SVector3 commandAngularVelocity;
 
 
-    public AddForce(Rigidbody commandRigidbody, Vector3 forceDir) : base(commandRigidbody)
+    public AddForce(string obj,Vector3 forceDir) : base(obj)
     {
-        this.forceDir = forceDir;
-        this.forceUndoDir = -forceDir;
-        this.commandPosition = commandRigidbody.position;
-        this.commandRotation = commandRigidbody.rotation;
-        this.commandVelocity = commandRigidbody.velocity;
-        this.commandAngularVelocity = commandRigidbody.angularVelocity;
+        this.forceDir = new SVector3(forceDir);
+        this.forceUndoDir = new SVector3(-forceDir);
+        this.commandPosition = new SVector3(base.GetCommandRigidbody().position);
+        this.commandRotation = new SQuaternion(base.GetCommandRigidbody().rotation);
+        this.commandVelocity = new SVector3(base.GetCommandRigidbody().velocity);
+        this.commandAngularVelocity = new SVector3(base.GetCommandRigidbody().angularVelocity);
     }
 
     public override void Execute()
     {
-        commandRigidbody.AddForce(forceDir);
+        base.GetCommandRigidbody().AddForce(forceDir.Vector3);
     }
 
     public override void Undo()
@@ -59,10 +57,10 @@ public class AddForce : RigidbodyCommands
             commandRigidbody.AddForce(forceUndoDir.Value);
         }
         */
-        commandRigidbody.velocity = commandVelocity;
-        commandRigidbody.angularVelocity = commandAngularVelocity;
-        commandRigidbody.position = commandPosition;
-        commandRigidbody.rotation = commandRotation;
+        base.GetCommandRigidbody().velocity = commandVelocity.Vector3;
+        base.GetCommandRigidbody().angularVelocity = commandAngularVelocity.Vector3;
+        base.GetCommandRigidbody().position = commandPosition.Vector3;
+        base.GetCommandRigidbody().rotation = commandRotation.Quaternion;
         /*
         if (GetUndoPrecise(commandRigidbody.position, commandPosition, commandRigidbody.rotation.eulerAngles, commandRotation.eulerAngles, commandRigidbody.velocity, commandVelocity, commandRigidbody.angularVelocity, commandAngularVelocity))
         {
