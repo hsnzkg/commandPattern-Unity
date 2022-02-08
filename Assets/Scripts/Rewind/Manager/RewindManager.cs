@@ -80,5 +80,4 @@ public class RewindManager : MonoBehaviour
     {
         rewindHandlers.Remove(rewind);
     }
-
 }

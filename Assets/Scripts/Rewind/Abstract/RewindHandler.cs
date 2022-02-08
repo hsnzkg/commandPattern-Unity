@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +15,8 @@ public abstract class RewindHandler : MonoBehaviour
 
     [Header("GROUP SETTINGS")]
     [SerializeField] protected Stack<CommandGroup> commandGroups = new Stack<CommandGroup>();
+    [SerializeField] protected Stack<byte[]> commandDatas = new Stack<byte[]>();
+
     [Header("REWIND SETTINGS")]
     [SerializeField] private RewindSettings rewindSetting;
 
@@ -25,6 +29,7 @@ public abstract class RewindHandler : MonoBehaviour
 
     [Header("UPDATE SETTINGS")]
     [SerializeField] protected RewindEnums.UPDATE_TYPE updateType = RewindEnums.UPDATE_TYPE.UPDATE;
+    
     private static readonly string SCRIPT_NAME = typeof(RewindHandler).Name;
 
     #region OWN-IMPLEMENTATIONS
@@ -35,7 +40,6 @@ public abstract class RewindHandler : MonoBehaviour
             if (DEBUG)
             {
                 Debug.LogError(command.GetType() + ": ATTEMPT TO ADD NEW COMMAND WHILE REWIND EXECUTE ALL BEHAIVOURS SHOULD BE PAUSE WHILE REWIND");
-
             }
             return;
         }
@@ -45,7 +49,6 @@ public abstract class RewindHandler : MonoBehaviour
             if (DEBUG)
             {
                 Debug.LogWarning("COMMAND GROUP IS FULL CREATING NEW GROUP");
-
             }
             IncreaseGroup();        
         }
@@ -64,7 +67,10 @@ public abstract class RewindHandler : MonoBehaviour
 
     protected void IncreaseGroup()
     {
-        commandGroups.Push(new CommandGroup(rewindSetting.maxCommandCount));
+        commandGroups.Push(new CommandGroup(rewindSetting.maxFrameCount));
+
+
+        byte[] tempData = DataCompresser.Compress(commandGroups.Peek());
     }
 
     protected bool RewindRequested()
@@ -116,9 +122,6 @@ public abstract class RewindHandler : MonoBehaviour
             complete = false;
         }
     }
-
-
-
 
     protected virtual void Reset()
     {
