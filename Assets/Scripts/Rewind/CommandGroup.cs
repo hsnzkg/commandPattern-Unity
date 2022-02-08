@@ -23,6 +23,11 @@ public class CommandGroup
         return commands.Pop();
     }
 
+    public void ClearCommands()
+    {
+        commands.Clear();
+    }
+
     public bool IsFull()
     {
         return commands.Count == MAX_COMMAND_SIZE ? true : false;

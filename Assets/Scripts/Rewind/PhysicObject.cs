@@ -98,7 +98,12 @@ public class PhysicObject : MonoBehaviour, IKillable
     {
         if (!objectRewindHandler.complete)
         {
+            GetComponent<Renderer>().material.color = Color.Lerp(GetComponent<Renderer>().material.color,Color.red,0.125f);
             return;
+        }
+        else
+        {
+            GetComponent<Renderer>().material.color = Color.Lerp(GetComponent<Renderer>().material.color,Color.green,0.125f);
         }
         if (Dead)
         {

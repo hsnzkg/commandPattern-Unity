@@ -6,5 +6,4 @@ using UnityEngine;
 public class RewindSettings : ScriptableObject
 {
     public int maxFrameCount = 60;
-    public bool compress = false;
 }

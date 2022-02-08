@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af8e277e656b8f6469c52a1ce2a22dfd, type: 3}
   m_Name: RewindSetting
   m_EditorClassIdentifier: 
-  maxFrameCount: 1024
+  maxFrameCount: 1200

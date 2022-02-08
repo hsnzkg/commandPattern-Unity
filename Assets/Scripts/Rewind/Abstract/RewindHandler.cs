@@ -14,7 +14,7 @@ public abstract class RewindHandler : MonoBehaviour
     [SerializeField] private bool DEBUG = false;
 
     [Header("GROUP SETTINGS")]
-    [SerializeField] protected Stack<CommandGroup> commandGroups = new Stack<CommandGroup>();
+    [SerializeField] protected CommandGroup commandGroup;
     [SerializeField] protected Stack<byte[]> commandDatas = new Stack<byte[]>();
 
     [Header("REWIND SETTINGS")]
@@ -44,7 +44,7 @@ public abstract class RewindHandler : MonoBehaviour
             return;
         }
 
-        if (commandGroups.Peek().IsFull())
+        if (commandGroup.IsFull())
         {
             if (DEBUG)
             {
@@ -56,9 +56,8 @@ public abstract class RewindHandler : MonoBehaviour
         if (DEBUG)
         {
             Debug.Log(command.GetCommandObject().name + ": ATTEMPT TO ADD " + command.GetType().Name);
-
         }
-        commandGroups.Peek().Add(command);
+        commandGroup.Add(command);
         if (executeCommand)
         {
             command.Execute();
@@ -67,10 +66,11 @@ public abstract class RewindHandler : MonoBehaviour
 
     protected void IncreaseGroup()
     {
-        commandGroups.Push(new CommandGroup(rewindSetting.maxFrameCount));
-
-
-        byte[] tempData = DataCompresser.Compress(commandGroups.Peek());
+        CommandGroup tempGroup = commandGroup;
+        commandGroup.ClearCommands();
+        Debug.Log(tempGroup.Lenght());
+        byte[] tempData = DataCompresser.Compress(tempGroup);
+        commandDatas.Push(tempData);
     }
 
     protected bool RewindRequested()
@@ -125,10 +125,6 @@ public abstract class RewindHandler : MonoBehaviour
 
     protected virtual void Reset()
     {
-        if (commandGroups.Count <= 0)
-        {
-            IncreaseGroup();
-        }
         ResetFlags();
     }
 
@@ -178,17 +174,21 @@ public abstract class RewindHandler : MonoBehaviour
 
     protected virtual void Execute()
     {
-        if (!commandGroups.Peek().IsEmpty())
+        if (!commandGroup.IsEmpty())
         {
-            Command lastCommand = commandGroups.Peek().GetLastCommand();
+            Command lastCommand = commandGroup.GetLastCommand();
             lastCommand.Undo();
         }
         else
         {
-            commandGroups.Pop();
+            if(commandDatas.Count > 0 )
+            {
+                Byte[] lastCompressedData = commandDatas.Pop();
+                commandGroup = DataCompresser.DeCompress(lastCompressedData);
+            }
         }
 
-        if (commandGroups.Count <= 0)
+        if (commandGroup.IsEmpty() && commandDatas.Count <= 0)
         {
             Reset();
             return;
@@ -201,7 +201,7 @@ public abstract class RewindHandler : MonoBehaviour
 
     public virtual void Awake()
     {
-        IncreaseGroup();
+        commandGroup = new CommandGroup(rewindSetting.maxFrameCount);
     }
 
     public virtual void Start()
