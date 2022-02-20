@@ -12,13 +12,15 @@ using UnityEngine;
 public abstract class RewindHandler : MonoBehaviour
 {
     [SerializeField] private bool DEBUG = false;
-
-    [Header("GROUP SETTINGS")]
     [SerializeField] protected CommandGroup commandGroup;
-    [SerializeField] protected Stack<byte[]> commandDatas = new Stack<byte[]>();
+
+
+    // HISTORY
+    protected Stack<byte[]> commandDatas = new Stack<byte[]>();
+    protected Stack<CommandGroup> commandGroups = new Stack<CommandGroup>();
 
     [Header("REWIND SETTINGS")]
-    [SerializeField] private RewindSettings rewindSetting;
+    [SerializeField] public RewindSettings rewindSetting;
 
     [Header("REWIND CONTROLLERS")]
     [SerializeField] private bool rewindComplete = true;
@@ -29,8 +31,6 @@ public abstract class RewindHandler : MonoBehaviour
 
     [Header("UPDATE SETTINGS")]
     [SerializeField] protected RewindEnums.UPDATE_TYPE updateType = RewindEnums.UPDATE_TYPE.UPDATE;
-    
-    private static readonly string SCRIPT_NAME = typeof(RewindHandler).Name;
 
     #region OWN-IMPLEMENTATIONS
     public void AddCommand(Command command, bool executeCommand)
@@ -50,7 +50,7 @@ public abstract class RewindHandler : MonoBehaviour
             {
                 Debug.LogWarning("COMMAND GROUP IS FULL CREATING NEW GROUP");
             }
-            IncreaseGroup();        
+            IncreaseGroup();
         }
 
         if (DEBUG)
@@ -66,8 +66,16 @@ public abstract class RewindHandler : MonoBehaviour
 
     protected void IncreaseGroup()
     {
-        commandDatas.Push(DataCompresser.Compress(commandGroup));
-        commandGroup.ClearCommands(); 
+        if (rewindSetting.isCompressing)
+        {
+            commandDatas.Push(DataCompresser.Compress(commandGroup));
+        }
+        else
+        {
+            commandGroups.Push(commandGroup);
+   
+        }
+        commandGroup.ClearCommands();
     }
 
     protected bool RewindRequested()
@@ -167,29 +175,49 @@ public abstract class RewindHandler : MonoBehaviour
         }
         rewindManager.UnRegisterRewindHandler(this);
     }
-    
+
 
     protected virtual void Execute()
     {
         if (!commandGroup.IsEmpty())
         {
-            Command lastCommand = commandGroup.GetLastCommand();
-            lastCommand.Undo();
+            commandGroup.GetLastCommand().Undo();
         }
         else
         {
-            if(commandDatas.Count > 0 )
+            if (rewindSetting.isCompressing)
             {
-                Byte[] lastCompressedData = commandDatas.Pop();
-                commandGroup = DataCompresser.DeCompress(lastCompressedData);
+                if (commandDatas.Count > 0)
+                {
+                    commandGroup = DataCompresser.DeCompress(commandDatas.Pop());
+                }
+            }
+            else
+            {
+                if (commandGroups.Count > 0)
+                {
+                    commandGroup = commandGroups.Pop();
+                }
             }
         }
 
-        if (commandGroup.IsEmpty() && commandDatas.Count <= 0)
+        if (rewindSetting.isCompressing)
         {
-            Reset();
-            return;
+            if (commandGroup.IsEmpty() && commandDatas.Count <= 0)
+            {
+                Reset();
+                return;
+            }
         }
+        else
+        {
+            if (commandGroup.IsEmpty() && commandGroups.Count <= 0)
+            {
+                Reset();
+                return;
+            }
+        }
+
     }
     #endregion
 
@@ -198,13 +226,14 @@ public abstract class RewindHandler : MonoBehaviour
 
     public virtual void Awake()
     {
-        this.gameObject.name = this.gameObject.name +"-"+ this.gameObject.GetInstanceID().ToString();
+        this.gameObject.name = this.gameObject.name + this.gameObject.GetInstanceID().ToString();
         commandGroup = new CommandGroup(rewindSetting.maxFrameCount);
+        RegisterHandler();
     }
 
     public virtual void Start()
     {
-        RegisterHandler();
+   
     }
 
     private void OnDestroy()

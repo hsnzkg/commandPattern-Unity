@@ -10,7 +10,7 @@ public class CommandGroup
         this.MAX_COMMAND_SIZE = MAX_COMMAND_SIZE;
     }
 
-    [SerializeField] private readonly Stack<Command> commands = new Stack<Command>();
+    private readonly Stack<Command> commands = new Stack<Command>();
     private int MAX_COMMAND_SIZE = -1;
 
     public void Add(Command command)

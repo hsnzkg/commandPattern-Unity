@@ -28,7 +28,7 @@ public abstract class RigidbodyCommands : Command
 public class AddForce : RigidbodyCommands
 {
     private SVector3 forceDir;
-    private SVector3? forceUndoDir;
+    //private SVector3? forceUndoDir;
     private SVector3 commandPosition;
     private SQuaternion commandRotation;
     private SVector3 commandVelocity;
@@ -38,7 +38,7 @@ public class AddForce : RigidbodyCommands
     public AddForce(string obj,Vector3 forceDir) : base(obj)
     {
         this.forceDir = new SVector3(forceDir);
-        this.forceUndoDir = new SVector3(-forceDir);
+        //this.forceUndoDir = new SVector3(-forceDir);
         this.commandPosition = new SVector3(base.GetCommandRigidbody().position);
         this.commandRotation = new SQuaternion(base.GetCommandRigidbody().rotation);
         this.commandVelocity = new SVector3(base.GetCommandRigidbody().velocity);

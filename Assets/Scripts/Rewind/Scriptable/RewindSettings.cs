@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,4 +7,5 @@ using UnityEngine;
 public class RewindSettings : ScriptableObject
 {
     public int maxFrameCount = 60;
+    public bool isCompressing = false;
 }

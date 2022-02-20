@@ -127,7 +127,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DEBUG: 0
-  commandGroups: []
   rewindSetting: {fileID: 11400000, guid: 2a59be1aab5de354f9f46e04e8ccfde3, type: 2}
   rewindComplete: 1
   cancelRewind: 0
